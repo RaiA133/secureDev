@@ -26,7 +26,7 @@ function FileStructure() {
 		}
 	]);
 
-	const handleFolderCheckboxChange = (folderIndex, checked) => {
+	const handleFolderCheckboxChange = (folderIndex) => {
 		const newFilesStructure = [...filesStructure];
 		newFilesStructure[folderIndex].checked = !filesStructure[folderIndex].checked;
 		newFilesStructure[folderIndex].filesChecked = filesStructure[folderIndex].checked ? [...newFilesStructure[folderIndex].files] : [];
@@ -45,7 +45,7 @@ function FileStructure() {
 									<Checkbox
 										isSelected={folder.checked}
 										onChange={(checked) => {
-											handleFolderCheckboxChange(folderIndex, checked)
+											handleFolderCheckboxChange(folderIndex)
 										}}
 									/>
 									<span>{folder.folderName}</span>
