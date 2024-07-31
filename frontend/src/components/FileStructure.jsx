@@ -10,83 +10,12 @@ import { FileImportContext } from '../contexts/fileImportContext';
 const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
 
 function FileStructure() {
-	const [filesStructure, setFilesStructure] = useState([
-		{
-			id: generateId(),
-			folderName: "Folder1",
-			checked: false,
-			filesChecked: ["File1", "File2"],
-			files: ["File1", "File2", "File3"],
-			subfolders: [
-				{
-					id: generateId(),
-					folderName: "Subfolder1",
-					checked: false,
-					filesChecked: ["SubFileA"],
-					files: ["SubFileA", "SubFileB"],
-					subfolders: [
-						{
-							id: generateId(),
-							folderName: "Subfolder2",
-							checked: false,
-							filesChecked: ["SubFileA"],
-							files: ["SubFileA", "SubFileB"],
-							subfolders: [
-								{
-									id: generateId(),
-									folderName: "Subfolder3",
-									checked: false,
-									filesChecked: ["SubFileA"],
-									files: ["SubFileA", "SubFileB"],
-									subfolders: []
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			id: generateId(),
-			folderName: "Folder2",
-			checked: false,
-			filesChecked: ["File1", "File2"],
-			files: ["File1", "File2"],
-			subfolders: [
-				{
-					id: generateId(),
-					folderName: "Subfolder1",
-					checked: true,
-					filesChecked: ["SubFileA"],
-					files: ["SubFileA", "SubFileB"],
-					subfolders: []
-				},
-				{
-					id: generateId(),
-					folderName: "Subfolder2",
-					checked: false,
-					filesChecked: ["SubFileA"],
-					files: ["SubFileA", "SubFileB"],
-					subfolders: []
-				}
-			]
-		},
-		{
-			id: generateId(),
-			folderName: "Folder3",
-			checked: false,
-			filesChecked: [],
-			files: ["File1", "File2", "File3", "File4", "File5"],
-			subfolders: []
-		}
-	]);
+	const [filesStructure, setFilesStructure] = useState([]);
 
 	const { filePaths } = useContext(FileImportContext)
 	useEffect(() => {
 		setFilesStructure(buildFolderStructure(filePaths))
 	}, [filePaths])
-
-	console.log(filesStructure);
 
 	// Fungsi untuk memperbarui folder berdasarkan ID
 	const updateFolderStructure = (folders, updatedFolder) => {
@@ -157,7 +86,7 @@ function FileStructure() {
 
 	// Menampilkan folder dan subfolder
 	const renderFolders = (folder, folderIndex, parentFolders) => (
-		<AccordionItem key={folder.id} subtitle={
+		<AccordionItem key={folder.id} textValue={folder.folderName} subtitle={
 			<div className="flex items-center text-white text-xs">
 				<Checkbox
 					size="sm"
