@@ -133,9 +133,10 @@ function FileStructure() {
 	// Menampilkan file dalam folder
 	const renderFiles = (folder, folderIndex, parentFolders) => (
 		<CheckboxGroup
+
 			value={folder.filesChecked}
 			onChange={(values) => handleFileCheckboxChange(parentFolders, folder.id, values)}
-			className='mb-2 pl-2'
+			className='my-1 pl-2'
 		>
 			{folder.files.map((file, fileIndex) => (
 				<Checkbox size="sm" key={fileIndex} value={file} color="secondary">
@@ -148,7 +149,7 @@ function FileStructure() {
 	// Menampilkan folder dan subfolder
 	const renderFolders = (folder, folderIndex, parentFolders) => (
 		<AccordionItem key={folder.id} subtitle={
-			<div className="flex items-center text-white">
+			<div className="flex items-center text-white text-xs">
 				<Checkbox
 					size="sm"
 					isSelected={folder.checked}
