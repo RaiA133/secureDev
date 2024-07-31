@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
 	Card, CardBody,
 	Accordion, AccordionItem, CheckboxGroup, Checkbox
 } from "@nextui-org/react";
+import { buildFolderStructure } from '../utils/buildFolderStructure';
+import { FileImportContext } from '../contexts/fileImportContext';
 
 // Fungsi untuk menghasilkan ID unik
 const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
@@ -78,6 +80,13 @@ function FileStructure() {
 			subfolders: []
 		}
 	]);
+
+	const { filePaths } = useContext(FileImportContext)
+	useEffect(() => {
+		setFilesStructure(buildFolderStructure(filePaths))
+	}, [filePaths])
+
+	console.log(filesStructure);
 
 	// Fungsi untuk memperbarui folder berdasarkan ID
 	const updateFolderStructure = (folders, updatedFolder) => {
