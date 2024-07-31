@@ -1,29 +1,35 @@
 import { useEffect, useState } from "react";
 import {
-	Card, CardHeader, CardBody, CardFooter, Divider, Link, Image,
+  Card, CardHeader, CardBody, CardFooter, Divider, Link, Image,
 } from "@nextui-org/react";
 
+const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build"]; // ini bisa di generate dari AI = dengan cek framework yg dipkai lalu AI mencari folder seperti nodule_modules didalamnya
+
 function ImportProject() {
-	const [selectedFiles, setSelectedFiles] = useState([]);
-	const [filePaths, setFilePaths] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [filePaths, setFilePaths] = useState([]);
 
-	useEffect(() => {
-		if (selectedFiles.length > 0) {
-			const worker = new Worker(new URL('../utils/fileWorker.js', import.meta.url));
-			worker.postMessage(selectedFiles);
-			worker.onmessage = (event) => {
-				setFilePaths(event.data);
-				worker.terminate();
-			};
-		}
-	}, [selectedFiles]);
+  useEffect(() => {
+    if (selectedFiles.length > 0) {
+      const worker = new Worker(new URL('../utils/fileWorker.js', import.meta.url));
+      worker.postMessage(selectedFiles);
+      worker.onmessage = (event) => {
+        setFilePaths(event.data);
+        worker.terminate();
+      };
+    }
+  }, [selectedFiles]);
 
-	const handleFileChange = (event) => {
-		setSelectedFiles(Array.from(event.target.files));
-	};
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    const filteredFiles = files.filter(file => {
+      const pathSegments = file.webkitRelativePath.split('/');
+      return !pathSegments.some(segment => EXCLUDED_FOLDERS.includes(segment));
+    });
+    setSelectedFiles(filteredFiles);
+  };
 
-	// console.log(JSON.stringify(filePaths, null, 2));
-	console.log(filePaths);
+  console.log(filePaths);
 
 	return (
 		<div>
