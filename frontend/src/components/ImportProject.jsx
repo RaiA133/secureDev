@@ -3,14 +3,13 @@ import {
   Card, CardHeader, CardBody, CardFooter, Divider, Link, Image,
 } from "@nextui-org/react";
 import { FileImportContext } from "../contexts/fileImportContext";
-import { buildFolderStructure } from "../utils/buildFolderStructure";
 
 const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build"];
 
 function ImportProject() {
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const {filePaths, setFilePaths} = useContext(FileImportContext);
-  const [detectedExcludedFolders, setDetectedExcludedFolders] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]); // hasil import input form, berupa file dengan type, ukuran, name, dll
+  const {filePaths, setFilePaths} = useContext(FileImportContext); // data selectedFiles, namun path nya saja (array)
+  const [detectedExcludedFolders, setDetectedExcludedFolders] = useState([]); // data folder mana saja yang tidak ikut di scan (node_modules, .git, dll)
 
   useEffect(() => {
     if (selectedFiles.length > 0) {
@@ -71,7 +70,7 @@ function ImportProject() {
             type="file"
             onChange={handleFileChange}
           />
-          {filePaths.length ? (
+          {filePaths.length && detectedExcludedFolders.join(', ')? (
             <div className="text-xs">
               <p className='mb-2'><span className="italic font-bold">{detectedExcludedFolders.join(', ')}</span> are not included</p>
               <p className='mb-2'>{filePaths.length} total files filtered</p>

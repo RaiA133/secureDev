@@ -23,7 +23,7 @@ export const buildFolderStructure = (paths) => {
       currentPath += currentPath ? '/' + part : part;
 
       if (!foldersMap.has(currentPath)) {
-        const isFile = part.includes('.');
+        const isFile = currentPath === path;
         const id = getId();
         const folder = isFile
           ? null
@@ -53,11 +53,9 @@ export const buildFolderStructure = (paths) => {
     const fileName = parts.pop();
     const folderPath = parts.join('/');
 
-    if (fileName.includes('.')) {
-      const parentFolder = foldersMap.get(folderPath);
-      if (parentFolder) {
-        parentFolder.files.push(fileName);
-      }
+    const parentFolder = foldersMap.get(folderPath);
+    if (parentFolder) {
+      parentFolder.files.push(fileName);
     }
   });
 

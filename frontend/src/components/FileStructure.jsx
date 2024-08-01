@@ -6,13 +6,10 @@ import {
 import { buildFolderStructure } from '../utils/buildFolderStructure';
 import { FileImportContext } from '../contexts/fileImportContext';
 
-// Fungsi untuk menghasilkan ID unik
-const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
-
 function FileStructure() {
-	const [filesStructure, setFilesStructure] = useState([]);
-
+	const [filesStructure, setFilesStructure] = useState([]); // hasil perubahan dari array path project ke object yg bisa dibaca UI
 	const { filePaths } = useContext(FileImportContext)
+
 	useEffect(() => {
 		setFilesStructure(buildFolderStructure(filePaths))
 	}, [filePaths])
