@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
 	Card, CardBody,
-	Accordion, AccordionItem, CheckboxGroup, Checkbox
+	Accordion, AccordionItem, CheckboxGroup, Checkbox,
+	Popover, PopoverTrigger, PopoverContent, Button, // info pop up filePathsAiSuggest
 } from "@nextui-org/react";
 import { buildFolderStructure } from '../utils/buildFolderStructure';
 import { FileImportContext } from '../contexts/fileImportContext';
 
 function FileStructure() {
 	const [filesStructure, setFilesStructure] = useState([]); // hasil perubahan dari array path project ke object yg bisa dibaca UI
-	const { filePaths } = useContext(FileImportContext)
+	const { filePaths, filePathsAiSuggest } = useContext(FileImportContext)
 
 	useEffect(() => {
-		setFilesStructure(buildFolderStructure(filePaths))
-	}, [filePaths])
+		setFilesStructure(buildFolderStructure(filePaths, filePathsAiSuggest))
+	}, [filePaths, filePathsAiSuggest])
 
 	// Fungsi untuk memperbarui folder berdasarkan ID
 	const updateFolderStructure = (folders, updatedFolder) => {
@@ -111,9 +112,36 @@ function FileStructure() {
 		<div className='flex flex-row gap-4'>
 			<Card className='min-w-[300px] max-w-[600px] p-5 py-10'>
 				<CardBody className='max-h-[600px] scroll-auto justify-top'>
+
 					<Accordion selectionMode="multiple" showDivider={true} isCompact >
 						{filesStructure.map((folder) => renderFolders(folder, folder.id, filesStructure))}
 					</Accordion>
+
+					{filePathsAiSuggest.length > 0 ? (
+						<div className='flex flex-row items-center gap-2'>
+							<div className='text-xs'>{filePathsAiSuggest.length} file is already checked</div>
+							<Popover placement="bottom" showArrow={true}>
+								<PopoverTrigger>
+									<Button size="sm" className="w-fit">?</Button>
+								</PopoverTrigger>
+								<PopoverContent>
+									<div className="px-1 py-2">
+										<div className="text-small font-bold mb-2">List pre-checked file</div>
+										<div className="text-tiny max-h-40 overflow-y-auto">
+											<ol>
+												{filePathsAiSuggest.map((listCheck, index) => (
+													<li key={index}>
+														{index + 1}. {listCheck}
+													</li>
+												))}
+											</ol>
+										</div>
+									</div>
+								</PopoverContent>
+							</Popover>
+						</div>
+					) : ""}
+
 				</CardBody>
 			</Card>
 		</div>

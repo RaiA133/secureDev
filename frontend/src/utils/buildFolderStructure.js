@@ -1,4 +1,4 @@
-export const buildFolderStructure = (paths) => {
+export const buildFolderStructure = (paths, checkedPaths) => {
   const createFolder = (folderName, id) => ({
     id,
     folderName,
@@ -47,7 +47,7 @@ export const buildFolderStructure = (paths) => {
     }
   });
 
-  // Populate files in folders
+  // Populate files in folders and mark checked files
   paths.forEach(path => {
     const parts = path.split('/');
     const fileName = parts.pop();
@@ -56,6 +56,9 @@ export const buildFolderStructure = (paths) => {
     const parentFolder = foldersMap.get(folderPath);
     if (parentFolder) {
       parentFolder.files.push(fileName);
+      if (checkedPaths.includes(path)) {
+        parentFolder.filesChecked.push(fileName);
+      }
     }
   });
 

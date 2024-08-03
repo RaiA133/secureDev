@@ -4,7 +4,7 @@ import {
 } from "@nextui-org/react";
 import { FileImportContext } from "../contexts/fileImportContext";
 
-const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build"];
+const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build", ".vscode", "vendor"]; // folder yang dilarang di scan
 
 function ImportProject() {
   const [selectedFiles, setSelectedFiles] = useState([]); // hasil import input form, berupa file dengan type, ukuran, name, dll
