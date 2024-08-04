@@ -18,11 +18,19 @@ export const FileImportContextProvider = ({ children }) => {
             model: "gemini-1.5-flash",
             generationConfig: { responseMimeType: "application/json" } // Set the `responseMimeType` to output JSON
           });
-          const prompt = `${filePaths} \n\n THIS IS AN ARRAY OF MY PROJECT STRUCTURE FILES, GIVE ME THIS ARRAY BACK IN COMPLETE BUT ONLY THE ONE THAT HAS THE FILES THAT ARE USUALLY CHANGED BY THE DEVELOPER, SOME FILES ARE CHANGED FREQUENTLY, AND DON'T GIVE ME TOO MANY !`;
+          const prompt = `${filePaths} \n\n THIS IS AN ARRAY OF MY PROJECT STRUCTURE FILES, DEFINE WHAT FRAMEWORK IF ITS USE FRAMEWORK AND GIVE ME THIS ARRAY BACK IN COMPLETE BUT ONLY THE ONE THAT HAS THE FILES THAT ARE USUALLY CHANGED BY THE DEVELOPER, SOME FILES ARE CHANGED FREQUENTLY, AND DON'T GIVE ME TOO MANY !
+          
+          THE OUTPUT : 
+          {
+            project : <the framework that use in the project with the version. if its not a framework return 'Personal Project'>
+            filePathsAiSuggest : [...ALL ARRAY FILE PATH]
+          }
+          `;
           const resultGenAI = await model.generateContent(prompt);
           const responseGenAI = resultGenAI.response;
           const textGenAI = responseGenAI.text();
-          setFilePathsAiSuggest(JSON.parse(textGenAI));
+          const JSONtextGenAI = JSON.parse(textGenAI)
+          setFilePathsAiSuggest(JSONtextGenAI.filePathsAiSuggest);
         } catch (error) {
           console.error("Error generating content:", error);
         }

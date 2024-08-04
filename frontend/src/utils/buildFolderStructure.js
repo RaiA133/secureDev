@@ -62,6 +62,18 @@ export const buildFolderStructure = (paths, checkedPaths) => {
     }
   });
 
+  // Check if all files in a folder are checked and update the `checked` property
+  const updateFolderCheckedStatus = (folder) => {
+    if (folder.files.length === folder.filesChecked.length) {
+      folder.checked = true;
+    }
+    folder.subfolders.forEach(updateFolderCheckedStatus);
+  };
+
+  if (root) {
+    updateFolderCheckedStatus(root);
+  }
+
   // Return the root folder or an empty array if root is null
   return root ? [root] : [];
 };
