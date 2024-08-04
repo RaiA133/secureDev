@@ -57,7 +57,7 @@ function ImportProject() {
           />
           <div className="flex flex-col">
             <p className="text-md">SecureDev</p>
-            <p className="text-small text-default-500">securedev.org</p>
+            <p className="text-small text-default-500">Gemini API Developer Competition</p>
           </div>
         </CardHeader>
         <Divider />
@@ -82,9 +82,10 @@ function ImportProject() {
           <Link
             isExternal
             showAnchorIcon
-            href="https://github.com/raia133"
+            href="https://ai.google.dev/gemini-api"
+            size="sm"
           >
-            About Me
+            Powered by Gemini API
           </Link>
         </CardFooter>
       </Card>

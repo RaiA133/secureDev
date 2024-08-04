@@ -1,19 +1,29 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-	Card, CardBody,
+	Card, CardBody, Divider,
 	Accordion, AccordionItem, CheckboxGroup, Checkbox,
 	Popover, PopoverTrigger, PopoverContent, Button, // info pop up filePathsAiSuggest
+	Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure // modal for result before read all checked file
 } from "@nextui-org/react";
 import { buildFolderStructure } from '../utils/buildFolderStructure';
 import { FileImportContext } from '../contexts/fileImportContext';
+import { getCheckedPaths } from '../utils/getCheckedPaths';
 
 function FileStructure() {
 	const [filesStructure, setFilesStructure] = useState([]); // hasil perubahan dari array path project ke object yg bisa dibaca UI
-	const { filePaths, filePathsAiSuggest } = useContext(FileImportContext)
+	const [checkedPaths, setCheckedPaths] = useState([]); // array dari hasil akhir file mana saja yang di checked
+	const { filePaths, filePathsAiSuggest, setFilePathsAiSuggest } = useContext(FileImportContext)
+
+	// modal 
+	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
 	useEffect(() => {
 		setFilesStructure(buildFolderStructure(filePaths, filePathsAiSuggest))
 	}, [filePaths, filePathsAiSuggest])
+
+	useEffect(() => {
+		setCheckedPaths(getCheckedPaths(filesStructure[0]))
+	}, [filesStructure])
 
 	// Fungsi untuk memperbarui folder berdasarkan ID
 	const updateFolderStructure = (folders, updatedFolder) => {
@@ -109,42 +119,111 @@ function FileStructure() {
 	);
 
 	return (
-		<div className='flex flex-row gap-4'>
-			<Card className='min-w-[300px] max-w-[600px] p-5 py-10'>
-				<CardBody className='max-h-[600px] scroll-auto justify-top'>
+		<>
+			{filesStructure.length > 0 ? (
+				<div className='flex flex-row gap-4'>
+					<Card className='min-w-[300px] max-w-[600px] p-5 py-10'>
+						<CardBody className='max-h-[600px] scroll-auto justify-top'>
 
-					<Accordion selectionMode="multiple" showDivider={true} isCompact >
-						{filesStructure.map((folder) => renderFolders(folder, folder.id, filesStructure))}
-					</Accordion>
+							<Accordion selectionMode="multiple" showDivider={true} isCompact >
+								{filesStructure.map((folder) => renderFolders(folder, folder.id, filesStructure))}
+							</Accordion>
 
-					{filePathsAiSuggest.length > 0 ? (
-						<div className='flex flex-row items-center gap-2'>
-							<div className='text-xs'>{filePathsAiSuggest.length} file is already checked</div>
-							<Popover placement="bottom" showArrow={true}>
-								<PopoverTrigger>
-									<Button size="sm" className="w-fit">?</Button>
-								</PopoverTrigger>
-								<PopoverContent>
-									<div className="px-1 py-2">
-										<div className="text-small font-bold mb-2">List pre-checked file</div>
-										<div className="text-tiny max-h-40 overflow-y-auto">
-											<ol>
-												{filePathsAiSuggest.map((listCheck, index) => (
-													<li key={index}>
-														{index + 1}. {listCheck}
-													</li>
-												))}
-											</ol>
-										</div>
+							<div className='flex flex-row gap-2 mt-2 h-full justify-between items-end'>
+
+								{filePathsAiSuggest.length > 0 ? (
+									<div className='flex flex-row gap-2'>
+										<Popover placement="bottom" showArrow={true} key='warning' color={'default'}>
+											<PopoverTrigger>
+												<Button color='ghost' size="sm" className="w-fit">{filePathsAiSuggest.length} file is already checked by AI</Button>
+											</PopoverTrigger>
+											<PopoverContent>
+												<div className="px-1 py-2">
+													<div className="text-small font-bold mb-2">List AI suggested pre-checked file</div>
+
+													<div className="text-tiny max-h-40 overflow-y-auto">
+														<ol className=''>
+															{filePathsAiSuggest.map((listCheck, index) => (
+																<li key={index}>
+																	{index + 1}. {listCheck}
+																</li>
+															))}
+														</ol>
+													</div>
+
+													<Divider className='my-2 bg-slate-400' />
+
+													<div className='border border-indigo-500/75  rounded-md p-2 px-4 text-xs'>
+														This list of files is suggested by AI based on files that are often changed by developers
+													</div>
+
+												</div>
+											</PopoverContent>
+										</Popover>
 									</div>
-								</PopoverContent>
-							</Popover>
-						</div>
-					) : ""}
+								) : ""}
 
-				</CardBody>
-			</Card>
-		</div>
+								{/* MODAL */}
+								{filesStructure.length > 0 ? (
+									<div className=''>
+										<Button color='default' size='sm' onPress={onOpen}>Submit Result ({checkedPaths.length} files)</Button>
+										<Modal
+											size='2xl'
+											backdrop='blur'
+											isOpen={isOpen}
+											onOpenChange={onOpenChange}
+											classNames={{
+												body: "py-6",
+												base: "border-[#292f46] bg-[#27272A] dark:bg-[#27272A] text-white",
+												header: "border-b-[1px] border-[#292f46]",
+												footer: "border-t-[1px] border-[#292f46]",
+												closeButton: "hover:bg-white/5 active:bg-white/10",
+											}}
+										>
+											<ModalContent>
+												{(onClose) => (
+													<>
+														<ModalHeader className="flex flex-col gap-1">Final Result</ModalHeader>
+														<ModalBody>
+
+															<ol className='text-xs max-h-[300px] overflow-y-auto'>
+																{checkedPaths.map((listCheck, index) => (
+																	<li key={index}>
+																		{index + 1}. {listCheck}
+																	</li>
+																))}
+															</ol>
+															
+															<Divider className='my-2 bg-white' />
+
+															<div className='text-xs'>
+																These are all the files that have been checked, please double check whether you have changed all these files before, before the <span className='font-bold text-warning-500'>application vulnerability scanning</span> process for your project start.
+															</div>
+
+														</ModalBody>
+														<ModalFooter>
+															<Button color="secondary" variant="light" onPress={onClose}>
+																Cencel
+															</Button>
+															<Button color="default" onPress={onClose}>
+																Submit
+															</Button>
+														</ModalFooter>
+													</>
+												)}
+											</ModalContent>
+										</Modal>
+									</div>
+								) : ""}
+								{/* END MODAL */}
+
+							</div>
+
+						</CardBody>
+					</Card>
+				</div>
+			) : ""}
+		</>
 	);
 }
 
