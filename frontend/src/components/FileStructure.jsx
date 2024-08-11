@@ -8,11 +8,18 @@ import {
 import { buildFolderStructure } from '../utils/buildFolderStructure';
 import { FileImportContext } from '../contexts/fileImportContext';
 import { getCheckedPaths } from '../utils/getCheckedPaths';
+import { readFiles } from '../utils/readFiles';
 
 function FileStructure() {
 	const [filesStructure, setFilesStructure] = useState([]); // hasil perubahan dari array path project ke object yg bisa dibaca UI
-	const [checkedPaths, setCheckedPaths] = useState([]); // array dari hasil akhir file mana saja yang di checked
-	const { filePaths, filePathsAiSuggest, setFilePathsAiSuggest } = useContext(FileImportContext)
+	const [isSubmited, setIsSubmited] = useState(false)
+	const {
+		selectedFiles,
+		filePaths,
+		filePathsAiSuggest,
+		projectFramework,
+		checkedPaths, setCheckedPaths
+	} = useContext(FileImportContext)
 
 	// modal 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -118,12 +125,38 @@ function FileStructure() {
 		</AccordionItem>
 	);
 
+		// membaca semua file ketika pencet submit
+	const handleSubmit = () => {
+		// Logika untuk membaca file
+		readFiles(selectedFiles, checkedPaths)
+			.then((fileContents) => {
+				const filesArray = fileContents.map(file => ({
+					FileName: file.fileName,
+					filePath: file.filePath,
+					content: file.content,
+				}));
+				setIsSubmited(true)
+				console.log(filesArray);
+				// Lakukan sesuatu dengan filesArray
+			})
+			.catch((error) => {
+				setIsSubmited(false)
+				console.error("Error reading files:", error);
+			});
+	};
+
 	return (
 		<>
 			{filesStructure.length > 0 ? (
 				<div className='flex flex-row gap-4'>
-					<Card className='min-w-[300px] max-w-[600px] p-5 py-10'>
+					<Card className='min-w-[300px] max-w-[600px] p-5 pb-10'>
 						<CardBody className='max-h-[600px] scroll-auto justify-top'>
+
+							<div>
+								Project : {projectFramework}
+							</div>
+
+							<Divider className='my-2' />
 
 							<Accordion selectionMode="multiple" showDivider={true} isCompact >
 								{filesStructure.map((folder) => renderFolders(folder, folder.id, filesStructure))}
@@ -139,7 +172,7 @@ function FileStructure() {
 											</PopoverTrigger>
 											<PopoverContent>
 												<div className="px-1 py-2">
-													<div className="text-small font-bold mb-2">List AI suggested pre-checked file</div>
+													<div className="text-small font-bold mb-2">List AI suggested pre-checked file ({projectFramework})</div>
 
 													<div className="text-tiny max-h-40 overflow-y-auto">
 														<ol className=''>
@@ -154,7 +187,8 @@ function FileStructure() {
 													<Divider className='my-2 bg-slate-400' />
 
 													<div className='border border-indigo-500/75  rounded-md p-2 px-4 text-xs'>
-														This list of files is suggested by AI based on files that are often changed by developers
+														<span>This list of files is suggested by AI based on files that are often changed by developers,</span> <br />
+														<span>you can changes it by re-checked file/folder, its editable.</span>
 													</div>
 
 												</div>
@@ -183,7 +217,7 @@ function FileStructure() {
 											<ModalContent>
 												{(onClose) => (
 													<>
-														<ModalHeader className="flex flex-col gap-1">Final Result</ModalHeader>
+														<ModalHeader className="flex flex-col gap-1">Final Result ({projectFramework})</ModalHeader>
 														<ModalBody>
 
 															<ol className='text-xs max-h-[300px] overflow-y-auto'>
@@ -193,7 +227,7 @@ function FileStructure() {
 																	</li>
 																))}
 															</ol>
-															
+
 															<Divider className='my-2 bg-white' />
 
 															<div className='text-xs'>
@@ -205,7 +239,7 @@ function FileStructure() {
 															<Button color="secondary" variant="light" onPress={onClose}>
 																Cencel
 															</Button>
-															<Button color="default" onPress={onClose}>
+															<Button color="default" onPress={onClose} onClick={handleSubmit}>
 																Submit
 															</Button>
 														</ModalFooter>

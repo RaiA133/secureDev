@@ -7,8 +7,8 @@ import { FileImportContext } from "../contexts/fileImportContext";
 const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build", ".vscode", "vendor"]; // folder yang dilarang di scan
 
 function ImportProject() {
-  const [selectedFiles, setSelectedFiles] = useState([]); // hasil import input form, berupa file dengan type, ukuran, name, dll
-  const {filePaths, setFilePaths} = useContext(FileImportContext); // data selectedFiles, namun path nya saja (array)
+  // const [selectedFiles, setSelectedFiles] = useState([]); // hasil import input form, berupa file dengan type, ukuran, name, dll
+  const {selectedFiles, setSelectedFiles, filePaths, setFilePaths} = useContext(FileImportContext); // data selectedFiles, namun path nya saja (array)
   const [detectedExcludedFolders, setDetectedExcludedFolders] = useState([]); // data folder mana saja yang tidak ikut di scan (node_modules, .git, dll)
 
   useEffect(() => {
