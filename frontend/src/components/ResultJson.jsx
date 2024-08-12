@@ -1,13 +1,23 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ResultContext } from "../contexts/resultContextJson";
-import { Card, Skeleton, CardHeader, CardBody, Image } from "@nextui-org/react";
-
-import Markdown from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import {
+  Skeleton, // loading handler
+  Button, Divider,
+  Card, CardHeader, CardBody, Image, // card
+  Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, // modal
+} from "@nextui-org/react";
 
 function ResultJson() {
   const { result, isLoading } = useContext(ResultContext);
+  const [selectedVulnerability, setSelectedVulnerability] = useState(null);
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal 
+
+  const handleCardClick = (vulnerabilityData) => {
+    setSelectedVulnerability(vulnerabilityData);
+    onOpen()
+  };
+
 
   return (
     <>
@@ -48,31 +58,102 @@ function ResultJson() {
                   } = result[vulnerability];
                   return (
                     <Card key={vulnerability} className="py-4 w-full bg-neutral-800">
-                      <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+
+                      <CardHeader className="pb-0 pt-2 px-4 flex-col items-start cursor-pointer"
+                        // onPress={onOpen} 
+                        onClick={() => handleCardClick({
+                          vulnerability,
+                          descriptions,
+                          levelThereat,
+                          typeThereat,
+                          filePath,
+                          solution,
+                          attention
+                        })}
+                      >
                         <p className="text-tiny uppercase font-bold">{typeThereat}</p>
                         <small className="text-default-500">Level : {levelThereat}</small>
                         <h4 className="font-bold text-large">{vulnerability}</h4>
                       </CardHeader>
-                      <CardBody className="overflow-visible py-2 justify-end items-center">
+
+                      {/* <CardBody className="overflow-visible py-2 justify-end items-center" onClick={onOpen}>
                         <Image
                           alt="Card background"
                           className="object-cover rounded-xl self-end"
                           src="https://nextui.org/images/hero-card-complete.jpeg"
                           width={200}
                         />
-                        {/* <div className="mt-4">
-                          <p><strong>Description:</strong> {descriptions}</p>
-                          <p><strong>Solution:</strong> {solution}</p>
-                          <div>
-                            <strong>Attention:</strong>
-                            <ul>
-                              {attention.map((item, index) => (
-                                <li key={index}>{item}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div> */}
-                      </CardBody>
+                      </CardBody> */}
+
+                      <Modal
+                        size='2xl'
+                        backdrop='blur'
+                        isOpen={isOpen}
+                        onOpenChange={onOpenChange}
+                        classNames={{
+                          body: "py-6",
+                          base: "border-[#292f46] bg-[#27272A] dark:bg-[#27272A] text-white",
+                          header: "border-b-[1px] border-[#292f46]",
+                          footer: "border-t-[1px] border-[#292f46]",
+                          closeButton: "hover:bg-white/5 active:bg-white/10",
+                        }}
+                      >
+                        <ModalContent>
+                          {(onClose) => (
+                            <>
+                              <ModalHeader className="flex flex-row justify-between gap-2 text-2xl">
+                                {selectedVulnerability.vulnerability}
+                                <div className="text-tiny p-0 text-end pr-7">
+                                  <p className="uppercase font-bold">{selectedVulnerability.typeThereat}</p>
+                                  <small className="text-default-100">Level uf Thereat : {selectedVulnerability.levelThereat}</small>
+                                </div>
+                              </ModalHeader>
+                              <ModalBody>
+
+                                <div className="text-sm">
+
+                                  <div className="max-h-[350px] pr-3 overflow-y-auto">
+                                    <div>
+                                      <strong>File path:</strong>
+                                      <ul>
+                                        {selectedVulnerability.filePath.map((item, index) => (
+                                          <li key={index}>- {item}</li>
+                                        ))}
+                                      </ul>
+                                    </div> <br />
+                                    <p><strong>Description:</strong> {selectedVulnerability.descriptions}</p> <br />
+                                    <p><strong>Solution:</strong> {selectedVulnerability.solution}</p> <br />
+                                    <div>
+                                      <strong>Attention:</strong>
+                                      <ul>
+                                        {selectedVulnerability.attention.map((item, index) => (
+                                          <li key={index}>- {item}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  </div>
+
+                                </div>
+
+                                <Divider className='my-2 bg-white' />
+
+                                <Button color="default" onPress={onClose}>View code changes</Button>
+
+                              </ModalBody>
+                              <ModalFooter>
+                                {/* <Button color="secondary" variant="light" onPress={onClose}>
+                                  Close
+                                </Button> */}
+                                <Button color="default" onPress={onClose}>
+                                  Close
+                                </Button>
+                              </ModalFooter>
+                            </>
+                          )}
+                        </ModalContent>
+                      </Modal>
+
+
                     </Card>
                   );
                 })}

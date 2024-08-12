@@ -19,7 +19,8 @@ function FileStructure() {
 		filePaths,
 		filePathsAiSuggest,
 		projectFramework,
-		checkedPaths, setCheckedPaths
+		checkedPaths, setCheckedPaths, 
+		setIsResultVisible
 	} = useContext(FileImportContext)
 
 	const {
@@ -140,6 +141,7 @@ function FileStructure() {
 					content: file.content,
 				}));
 				setIsSubmited(true)
+				setIsResultVisible(true);
 				setDataset({
 					'framework' :  projectFramework,
 					'code' : filesArray,

@@ -12,6 +12,7 @@ export const FileImportContextProvider = ({ children }) => {
   const [filePathsAiSuggest, setFilePathsAiSuggest] = useState([]); // data file mana saya yang di check di awal, di suggest oleh Gemini API
   const [projectFramework, setProjectFramework] = useState(''); // store data nama framework jika menggunakan framework
   const [checkedPaths, setCheckedPaths] = useState([]); // array dari hasil akhir file mana saja yang di checked
+  const [isResultVisible, setIsResultVisible] = useState(false); // kondisi dmn result component akan muncul ketika ini true
 
   useEffect(() => {
     if (filePaths.length > 0) {
@@ -29,6 +30,8 @@ export const FileImportContextProvider = ({ children }) => {
             project : <the framework that use in the project with the version. if its not a framework return 'Personal Project'>
             filePathsAiSuggest : [...ALL ARRAY FILE PATH]
           }
+
+          TRY TO NOT SUGGEST MORE THAN 15 FILE
           `;
   
           const resultGenAI = await model.generateContent(prompt);
@@ -61,6 +64,7 @@ export const FileImportContextProvider = ({ children }) => {
       filePathsAiSuggest, setFilePathsAiSuggest,
       projectFramework, setProjectFramework,
       checkedPaths, setCheckedPaths,
+      isResultVisible, setIsResultVisible,
     }}>
       {children}
     </FileImportContext.Provider>

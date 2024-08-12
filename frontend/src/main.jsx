@@ -8,7 +8,7 @@ import { ResultContextProvider } from './contexts/resultContextJson.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <NextUIProvider>
-      <main className="dark text-foreground bg-background h-screen flex justify-center items-center">
+      <main className="dark text-foreground bg-background h-screen overflow-y-auto flex justify-center items-center">
         <FileImportContextProvider>
           <ResultContextProvider>
             <App />

@@ -4,12 +4,11 @@ import {
 } from "@nextui-org/react";
 import { FileImportContext } from "../contexts/fileImportContext";
 
-const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build", ".vscode", "vendor"]; // folder yang dilarang di scan
+const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build", ".vscode", "vendor"];
 
 function ImportProject() {
-  // const [selectedFiles, setSelectedFiles] = useState([]); // hasil import input form, berupa file dengan type, ukuran, name, dll
-  const {selectedFiles, setSelectedFiles, filePaths, setFilePaths} = useContext(FileImportContext); // data selectedFiles, namun path nya saja (array)
-  const [detectedExcludedFolders, setDetectedExcludedFolders] = useState([]); // data folder mana saja yang tidak ikut di scan (node_modules, .git, dll)
+  const { selectedFiles, setSelectedFiles, filePaths, setFilePaths, isResultVisible } = useContext(FileImportContext);
+  const [detectedExcludedFolders, setDetectedExcludedFolders] = useState([]);
 
   useEffect(() => {
     if (selectedFiles.length > 0) {
@@ -39,13 +38,19 @@ function ImportProject() {
     setSelectedFiles(filteredFiles);
     setDetectedExcludedFolders(Array.from(foundExcludedFolders));
 
-    // Extract file paths as strings
     const filePaths = filteredFiles.map(file => file.webkitRelativePath);
     setFilePaths(filePaths);
+
   };
 
+  const [stickyImportPage, setStickyImportPage] = useState(false);
+
+  useEffect(() => {
+    setStickyImportPage(isResultVisible);
+  }, [isResultVisible]);
+
   return (
-    <div>
+    <div className={stickyImportPage ? "sticky top-10 self-start" : ""}>
       <Card className="max-w-[600px] max-h-[350px] p-5">
         <CardHeader className="flex gap-3">
           <Image
@@ -70,7 +75,7 @@ function ImportProject() {
             type="file"
             onChange={handleFileChange}
           />
-          {filePaths.length && detectedExcludedFolders.join(', ')? (
+          {filePaths.length && detectedExcludedFolders.join(', ') ? (
             <div className="text-xs">
               <p className='mb-2'><span className="italic font-bold">{detectedExcludedFolders.join(', ')}</span> are not included</p>
               <p className='mb-2'>{filePaths.length} total files filtered</p>

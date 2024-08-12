@@ -35,7 +35,7 @@ export const ResultContextProvider = ({ children }) => {
 
           const prompt = `${JSON.stringify(dataset.code)} \n\n It's a ${dataset.framework} app. Look for vulnerabilities from the data above! If necessary, give me a description, and how to overcome the vulnerability if there is one. Then also provide all the code changes in each file whose code is stated to have to be changed!
 
-          Format output (make it can be JSON.parse):
+          Format output:
           {
               "<vulnerability_name>": {
                   "descriptions": "<description>",
@@ -47,6 +47,8 @@ export const ResultContextProvider = ({ children }) => {
               },
               ... other vulnerability (try more than 1 vulnerability)
           }
+
+          make sure the data can be in JSON.parse
           `;
 
           // "codeChanges" : {
@@ -57,13 +59,14 @@ export const ResultContextProvider = ({ children }) => {
 
           const resultGenAI = await model.generateContent(prompt);
           const responseGenAI = resultGenAI.response;
+
           const textGenAI = await responseGenAI.text();
-          console.log("sebelum parse", textGenAI);
+          // console.log("sebelum parse", textGenAI);
 
           // const JSONtextGenAI = textGenAI;
 
           const JSONtextGenAI = JSON.parse(textGenAI);
-          console.log("setelah parse", JSONtextGenAI);
+          // console.log("setelah parse", JSONtextGenAI);
 
           // return
 
