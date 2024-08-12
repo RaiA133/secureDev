@@ -25,12 +25,12 @@ function ResultJson() {
   };
 
   const handleGenCodeChangeSubmit = () => {
-    const filteredData = dataset.code.filter(file => // Filter dataset based on selectedVulnerability.filePath
+    const filteredData = dataset.code.filter(file => 
       selectedVulnerability.filePath.includes(file.filePath)
     );
     setPreDataGenCodeChanges(selectedVulnerability);
-    setDataSetFiltered(filteredData);  // Update the context with the filtered dataset
-  }
+    setDataSetFiltered(filteredData);
+  }  
 
   const determineThreatClass = (levelThereat) => {
     // console.log(levelThereat);
@@ -58,8 +58,6 @@ function ResultJson() {
     }
     return threatClass;
   };
-
-  console.log("isError", isError);
 
   return (
     <>

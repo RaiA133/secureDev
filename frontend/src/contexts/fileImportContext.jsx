@@ -2,11 +2,12 @@ import { createContext, useEffect, useState } from "react";
 
 // Gemini API
 import { GoogleGenerativeAI } from '@google/generative-ai';
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 export const FileImportContext = createContext();
 
 export const FileImportContextProvider = ({ children }) => {
+  const [apiKey, setApiKey] = useState(localStorage.getItem("apiKey") || "");
+
   const [selectedFiles, setSelectedFiles] = useState([]); // hasil import input form, berupa file dengan type, ukuran, name, dll
   const [filePaths, setFilePaths] = useState([]); // data selectedFiles di importProject.jsx, namun path nya saja (array)
   const [filePathsAiSuggest, setFilePathsAiSuggest] = useState([]); // data file mana saya yang di check di awal, di suggest oleh Gemini API
@@ -14,6 +15,9 @@ export const FileImportContextProvider = ({ children }) => {
   const [checkedPaths, setCheckedPaths] = useState([]); // array dari hasil akhir file mana saja yang di checked
   const [isResultVisible, setIsResultVisible] = useState(false); // kondisi dmn result component akan muncul ketika ini true
   const [isLoadingImport, setIsLoadingImport] = useState(false); // loading handler
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+
   useEffect(() => {
     if (filePaths.length > 0) {
       const generateContent = async () => {
@@ -64,6 +68,7 @@ export const FileImportContextProvider = ({ children }) => {
 
   return (
     <FileImportContext.Provider value={{
+      apiKey, setApiKey,
       selectedFiles, setSelectedFiles,
       filePaths, setFilePaths, 
       filePathsAiSuggest, setFilePathsAiSuggest,

@@ -21,7 +21,6 @@ function FileStructure() {
 		projectFramework,
 		checkedPaths, setCheckedPaths,
 		setIsResultVisible,
-		isLoadingImport
 	} = useContext(FileImportContext)
 
 	const {
@@ -162,7 +161,7 @@ function FileStructure() {
 						<CardBody className='max-h-[600px] scroll-auto justify-top'>
 
 							<div className='flex flex-row'>
-								{isLoadingImport ? (
+								{filePathsAiSuggest.length == 0 ? (
 									<div className=" ps-2 max-w-[200px] w-full flex items-center gap-3">
 										<div className="w-full flex flex-col gap-2">
 											<Skeleton className="h-3 w-2/5 rounded-lg pb-8" />

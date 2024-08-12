@@ -1,16 +1,20 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Gemini API
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from '@google/generative-ai';
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+import { FileImportContext } from "./fileImportContext";
 
 export const ResultContext = createContext();
 
 export const ResultContextProvider = ({ children }) => {
+  const {apiKey} = useContext(FileImportContext)
+
   const [dataset, setDataset] = useState([]); // data object berupa bahan untuk sebelum ditanyakan ke Gemini API
   const [isLoading, setIsLoading] = useState(false); // loading handler
   const [isError, setIsError] = useState(false); // error handler
   const [result, setResult] = useState(""); // data hasil generate AI
+
+  const genAI = new GoogleGenerativeAI(apiKey);
 
   useEffect(() => {
     const timer = setTimeout(() => {
