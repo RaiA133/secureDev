@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { ResultContext } from "../contexts/resultContextJson";
+import { GenerateCodeChanges } from "../contexts/generateCodeChanges";
 import {
   Skeleton, // loading handler
   Button, Divider,
@@ -7,8 +8,13 @@ import {
   Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, // modal
 } from "@nextui-org/react";
 
+import Markdown from 'react-markdown'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 function ResultJson() {
-  const { result, isLoading } = useContext(ResultContext);
+  const { result, isLoading, isError, dataset } = useContext(ResultContext);
+  const { setPreDataGenCodeChanges, setDataSetFiltered, isLoadingCodeChanges, resultCodeChange } = useContext(GenerateCodeChanges);
   const [selectedVulnerability, setSelectedVulnerability] = useState(null);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal 
@@ -18,9 +24,24 @@ function ResultJson() {
     onOpen()
   };
 
+  const handleGenCodeChangeSubmit = () => {
+    const filteredData = dataset.code.filter(file => // Filter dataset based on selectedVulnerability.filePath
+      selectedVulnerability.filePath.includes(file.filePath)
+    );
+    setPreDataGenCodeChanges(selectedVulnerability);
+    setDataSetFiltered(filteredData);  // Update the context with the filtered dataset
+  }
 
   return (
     <>
+
+      {/* Handle the error state */}
+      {isError && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-lg">
+          <h2 className="text-lg font-bold">Error</h2>
+          <p>An error occurred while fetching the data. Please try again.</p>
+        </div>
+      )}
 
       {isLoading ? (
         <Card className="min-w-[300px] max-w-[780px] p-5 pb-10">
@@ -55,7 +76,32 @@ function ResultJson() {
                     filePath,
                     solution,
                     attention
-                  } = result[vulnerability];
+                  } = result[vulnerability] || {}; // Default to an empty object if result[vulnerability] is undefined
+
+                  let threatClass = "";
+
+                  if (levelThereat) { // Check if levelThereat is defined
+                    switch (levelThereat) {
+                      case "info":
+                        threatClass = "text-white-500";
+                        break;
+                      case "low":
+                        threatClass = "text-blue-500";
+                        break;
+                      case "medium":
+                        threatClass = "text-green-500";
+                        break;
+                      case "high":
+                        threatClass = "text-orange-500";
+                        break;
+                      case "critical":
+                        threatClass = "text-red-500";
+                        break;
+                      default:
+                        threatClass = ""; // Optional: Add a default class or leave it empty
+                    }
+                  }
+
                   return (
                     <Card key={vulnerability} className="py-4 w-full bg-neutral-800">
 
@@ -68,25 +114,20 @@ function ResultJson() {
                           typeThereat,
                           filePath,
                           solution,
-                          attention
+                          attention,
+                          threatClass
                         })}
                       >
-                        <p className="text-tiny uppercase font-bold">{typeThereat}</p>
-                        <small className="text-default-500">Level : {levelThereat}</small>
+                        <p className="text-md uppercase font-bold">{typeThereat}</p>
+                        <small className="text-default-800">
+                          Level : <span className={`font-bold ${threatClass}`}>{levelThereat}</span>
+                        </small>
                         <h4 className="font-bold text-large">{vulnerability}</h4>
                       </CardHeader>
 
-                      {/* <CardBody className="overflow-visible py-2 justify-end items-center" onClick={onOpen}>
-                        <Image
-                          alt="Card background"
-                          className="object-cover rounded-xl self-end"
-                          src="https://nextui.org/images/hero-card-complete.jpeg"
-                          width={200}
-                        />
-                      </CardBody> */}
-
                       <Modal
-                        size='2xl'
+                        placement='top'
+                        size='4xl'
                         backdrop='blur'
                         isOpen={isOpen}
                         onOpenChange={onOpenChange}
@@ -105,7 +146,7 @@ function ResultJson() {
                                 {selectedVulnerability.vulnerability}
                                 <div className="text-tiny p-0 text-end pr-7">
                                   <p className="uppercase font-bold">{selectedVulnerability.typeThereat}</p>
-                                  <small className="text-default-100">Level uf Thereat : {selectedVulnerability.levelThereat}</small>
+                                  <small className="text-default-100">Level of Thereat : <span className={`font-bold ${selectedVulnerability.threatClass}`}>{selectedVulnerability.levelThereat}</span></small>
                                 </div>
                               </ModalHeader>
                               <ModalBody>
@@ -117,7 +158,7 @@ function ResultJson() {
                                       <strong>File path:</strong>
                                       <ul>
                                         {selectedVulnerability.filePath.map((item, index) => (
-                                          <li key={index}>- {item}</li>
+                                          <li key={index}><i>- {item}</i></li>
                                         ))}
                                       </ul>
                                     </div> <br />
@@ -137,14 +178,74 @@ function ResultJson() {
 
                                 <Divider className='my-2 bg-white' />
 
-                                <Button color="default" onPress={onClose}>View code changes</Button>
+                                <Button color="default" onClick={() =>
+                                  handleGenCodeChangeSubmit()
+                                }> <b>Generate Code Changes</b> </Button>
+
+                                <div className="dark text-foreground bg-background rounded-2xl">
+
+                                  {isLoadingCodeChanges ? (
+                                    <Card className="space-y-5 p-4 w-full" radius="lg">
+                                      <div className="space-y-3">
+                                        <Skeleton className="w-3/5 rounded-lg">
+                                          <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+                                        </Skeleton>
+                                        <Skeleton className="w-4/5 rounded-lg">
+                                          <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                                        </Skeleton>
+                                        <Skeleton className="w-2/5 rounded-lg">
+                                          <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+                                        </Skeleton>
+                                        <Skeleton className="w-3/5 rounded-lg">
+                                          <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                                        </Skeleton>
+                                        <Skeleton className="w-4/5 rounded-lg">
+                                          <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                                        </Skeleton>
+                                        <Skeleton className="w-4/5 rounded-lg">
+                                          <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                                        </Skeleton>
+                                      </div>
+                                    </Card>
+                                  ) : (
+                                    resultCodeChange[selectedVulnerability.vulnerability] && (
+                                      <Card className="min-w-[300px] w-full p-5">
+                                        <div className="w-full space-y-5">
+                                          <div className="text-[12px] max-h-[400px] overflow-auto pr-3">
+                                            <Markdown
+                                              children={resultCodeChange[selectedVulnerability.vulnerability]}
+                                              components={{
+                                                code(props) {
+                                                  const { children, className, node, ...rest } = props
+                                                  const match = /language-(\w+)/.exec(className || '')
+                                                  return match ? (
+                                                    <SyntaxHighlighter
+                                                      {...rest}
+                                                      PreTag="div"
+                                                      children={String(children).replace(/\n$/, '')}
+                                                      language={match[1]}
+                                                      style={a11yDark}
+                                                      showLineNumbers
+                                                    />
+                                                  ) : (
+                                                    <code {...rest} className={className}>
+                                                      {children}
+                                                    </code>
+                                                  )
+                                                }
+                                              }}
+                                            />
+                                          </div>
+                                        </div>
+                                      </Card>
+                                    )
+                                  )}
+
+                                </div>
 
                               </ModalBody>
                               <ModalFooter>
-                                {/* <Button color="secondary" variant="light" onPress={onClose}>
-                                  Close
-                                </Button> */}
-                                <Button color="secondary"  variant="light" className="text-white" onPress={onClose}>
+                                <Button color="secondary" variant="light" className="text-white" onPress={onClose}>
                                   Close
                                 </Button>
                               </ModalFooter>
@@ -159,31 +260,6 @@ function ResultJson() {
                 })}
               </div>
 
-
-
-              {/* <Markdown
-                  children={result}
-                  components={{
-                    code(props) {
-                      const { children, className, node, ...rest } = props
-                      const match = /language-(\w+)/.exec(className || '')
-                      return match ? (
-                        <SyntaxHighlighter
-                          {...rest}
-                          PreTag="div"
-                          children={String(children).replace(/\n$/, '')}
-                          language={match[1]}
-                          style={a11yDark}
-                          showLineNumbers
-                        />
-                      ) : (
-                        <code {...rest} className={className}>
-                          {children}
-                        </code>
-                      )
-                    }
-                  }}
-                /> */}
             </div>
           </Card>
         )

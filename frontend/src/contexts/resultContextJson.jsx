@@ -8,7 +8,8 @@ export const ResultContext = createContext();
 
 export const ResultContextProvider = ({ children }) => {
   const [dataset, setDataset] = useState([]); // data object berupa bahan untuk sebelum ditanyakan ke Gemini API
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // loading handler
+  const [isError, setIsError] = useState(false); // loading handler
   const [result, setResult] = useState(""); // data hasil generate AI
 
   useEffect(() => {
@@ -30,8 +31,6 @@ export const ResultContextProvider = ({ children }) => {
             generationConfig: { responseMimeType: "application/json" },
             safetySettings,
           });
-
-          console.log(dataset.code);
 
           const prompt = `${JSON.stringify(dataset.code)} \n\n It's a ${dataset.framework} app. Look for vulnerabilities from the data above! If necessary, give me a description, and how to overcome the vulnerability if there is one. Then also provide all the code changes in each file whose code is stated to have to be changed!
 
@@ -56,19 +55,11 @@ export const ResultContextProvider = ({ children }) => {
           //   ... "<other file path>" : '<other file codeChanges>'      
           // },
 
-
           const resultGenAI = await model.generateContent(prompt);
           const responseGenAI = resultGenAI.response;
-
           const textGenAI = await responseGenAI.text();
-          // console.log("sebelum parse", textGenAI);
-
-          // const JSONtextGenAI = textGenAI;
-
           const JSONtextGenAI = JSON.parse(textGenAI);
-          // console.log("setelah parse", JSONtextGenAI);
 
-          // return
 
           setResult(prevState => {
             return JSONtextGenAI || prevState;
@@ -77,6 +68,8 @@ export const ResultContextProvider = ({ children }) => {
           setIsLoading(false);
 
         } catch (error) {
+          setIsLoading(false);
+          setIsError(true)
           console.error("Error generating content:", error);
         }
       };
@@ -88,7 +81,8 @@ export const ResultContextProvider = ({ children }) => {
     <ResultContext.Provider value={{
       dataset, setDataset,
       result,
-      isLoading, setIsLoading
+      isLoading, setIsLoading,
+      isError, setIsError
     }}>
       {children}
     </ResultContext.Provider>
