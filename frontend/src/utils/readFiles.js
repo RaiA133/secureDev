@@ -6,11 +6,14 @@ export const readFiles = (files, selectedFilePaths) => {
         const reader = new FileReader();
 
         reader.onload = (event) => {
+          // const modifiedContent = event.target.result.replace(/"/g, "'");
+
           // Mengembalikan konten file
           resolve({
             fileName: file.name,
             filePath: file.webkitRelativePath,
             content: event.target.result,
+            // content: modifiedContent,
           });
         };
 

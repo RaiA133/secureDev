@@ -7,6 +7,7 @@ import {
 } from "@nextui-org/react";
 import { buildFolderStructure } from '../utils/buildFolderStructure';
 import { FileImportContext } from '../contexts/fileImportContext';
+import { ResultContext } from '../contexts/resultContextJson';
 import { getCheckedPaths } from '../utils/getCheckedPaths';
 import { readFiles } from '../utils/readFiles';
 
@@ -20,6 +21,10 @@ function FileStructure() {
 		projectFramework,
 		checkedPaths, setCheckedPaths
 	} = useContext(FileImportContext)
+
+	const {
+		setDataset
+	} = useContext(ResultContext)
 
 	// modal 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -125,9 +130,8 @@ function FileStructure() {
 		</AccordionItem>
 	);
 
-		// membaca semua file ketika pencet submit
+	// membaca semua file ketika pencet submit
 	const handleSubmit = () => {
-		// Logika untuk membaca file
 		readFiles(selectedFiles, checkedPaths)
 			.then((fileContents) => {
 				const filesArray = fileContents.map(file => ({
@@ -136,8 +140,10 @@ function FileStructure() {
 					content: file.content,
 				}));
 				setIsSubmited(true)
-				console.log(filesArray);
-				// Lakukan sesuatu dengan filesArray
+				setDataset({
+					'framework' :  projectFramework,
+					'code' : filesArray,
+				})
 			})
 			.catch((error) => {
 				setIsSubmited(false)
