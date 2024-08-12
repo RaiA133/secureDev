@@ -225,7 +225,7 @@ function FileStructure() {
 											<ModalContent>
 												{(onClose) => (
 													<>
-														<ModalHeader className="flex flex-col gap-1">Final Result ({projectFramework})</ModalHeader>
+														<ModalHeader className="flex flex-col gap-1">Let Gemini AI understand your Code </ModalHeader>
 														<ModalBody>
 
 															<ol className='text-xs max-h-[300px] overflow-y-auto'>
@@ -239,12 +239,12 @@ function FileStructure() {
 															<Divider className='my-2 bg-white' />
 
 															<div className='text-xs'>
-																These are all the files that have been checked, please double check whether you have changed all these files before, before the <span className='font-bold text-warning-500'>application vulnerability scanning</span> process for your project start.
+																These are all the files that have been checked, please double check whether you have changed all these files before, before the <span className='font-bold text-warning-500'>application vulnerability scanning</span> process for your  <span className='font-bold text-green-500'>{projectFramework}</span> App start.
 															</div>
 
 														</ModalBody>
 														<ModalFooter>
-															<Button color="secondary" variant="light" onPress={onClose}>
+															<Button color="secondary" variant="light" onPress={onClose} className='text-white'>
 																Cencel
 															</Button>
 															<Button color="default" onPress={onClose} onClick={handleSubmit}>

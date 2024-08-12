@@ -144,7 +144,7 @@ function ResultJson() {
                                 {/* <Button color="secondary" variant="light" onPress={onClose}>
                                   Close
                                 </Button> */}
-                                <Button color="default" onPress={onClose}>
+                                <Button color="secondary"  variant="light" className="text-white" onPress={onClose}>
                                   Close
                                 </Button>
                               </ModalFooter>
