@@ -9,8 +9,15 @@ export const ResultContext = createContext();
 export const ResultContextProvider = ({ children }) => {
   const [dataset, setDataset] = useState([]); // data object berupa bahan untuk sebelum ditanyakan ke Gemini API
   const [isLoading, setIsLoading] = useState(false); // loading handler
-  const [isError, setIsError] = useState(false); // loading handler
+  const [isError, setIsError] = useState(false); // error handler
   const [result, setResult] = useState(""); // data hasil generate AI
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsError(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [isError]);
 
   useEffect(() => {
     if (dataset?.code?.length > 0) {
@@ -38,7 +45,7 @@ export const ResultContextProvider = ({ children }) => {
           {
               "<vulnerability_name>": {
                   "descriptions": "<description>",
-                  "levelThereat" : "<info(Issues that do not have a direct security impact but may provide useful information) / low / medium / high / critical/>"
+                  "levelThereat" : "<info(Issues that do not have a direct security impact but may provide useful information) / low / medium / high / critical>"
                   "typeThereat" : "<could be like data security / authentication security / etc. just write down what security is>"
                   "filePath": ["<array of filePath from data above>"],
                   "solution": "<brief explanation of the solution>",

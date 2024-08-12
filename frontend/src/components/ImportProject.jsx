@@ -57,7 +57,7 @@ function ImportProject() {
             alt="nextui logo"
             height={40}
             radius="sm"
-            src="/vite.svg"
+            src="/Logo_crop_no_bg.png"
             width={40}
           />
           <div className="flex flex-col">
@@ -67,14 +67,17 @@ function ImportProject() {
         </CardHeader>
         <Divider />
         <CardBody className='justify-center'>
-          <p className='mb-2 text-center'>Open your local project</p>
+
+          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-4" for="file_input">Open your local project</label>
           <input
-            className="mb-2"
+            className="mb-2 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+            aria-describedby="file_input_help"
             directory=""
             webkitdirectory=""
             type="file"
             onChange={handleFileChange}
           />
+
           {filePaths.length && detectedExcludedFolders.join(', ') ? (
             <div className="text-xs">
               <p className='mb-2'><span className="italic font-bold">{detectedExcludedFolders.join(', ')}</span> are not included</p>
@@ -82,7 +85,7 @@ function ImportProject() {
             </div>
           ) : ""}
         </CardBody>
-        <Divider />
+        <Divider className="mt-4" />
         <CardFooter>
           <Link
             isExternal

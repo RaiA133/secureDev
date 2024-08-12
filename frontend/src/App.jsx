@@ -6,7 +6,7 @@ import { useContext } from 'react';
 import { FileImportContext } from './contexts/fileImportContext';
 
 function App() {
-  const {isResultVisible} = useContext(FileImportContext)
+  const { isResultVisible } = useContext(FileImportContext)
 
   return (
     <div className='flex flex-col gap-4' style={{ height: '100vh' }}>
@@ -17,17 +17,22 @@ function App() {
           <FileStructure />
         </div>
       ) : (
-        <>
+        <div className='flex flex-col gap-4 min-w-[300px] max-w-[850px]'>
           <div className='flex flex-row gap-4 pt-10'>
-            <ImportProject />
-            <FileStructure />
+            <div className='flex-1'>
+              <ImportProject />
+            </div>
+            <div className='flex-1'>
+              <FileStructure />
+            </div>
           </div>
 
           {/* Container for Result with overflow and auto scroll */}
           <div className='flex-1 pb-10'>
             <Result />
           </div>
-        </>
+        </div>
+
       )}
     </div>
 

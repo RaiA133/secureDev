@@ -158,7 +158,7 @@ function FileStructure() {
 		<>
 			{filesStructure.length > 0 ? (
 				<div className='flex flex-row gap-4'>
-					<Card className='min-w-[300px] max-w-[600px] p-5 pb-10'>
+					<Card className='min-w-[300px] w-full p-5 pb-5'>
 						<CardBody className='max-h-[600px] scroll-auto justify-top'>
 
 							<div className='flex flex-row'>
