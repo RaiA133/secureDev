@@ -32,6 +32,33 @@ function ResultJson() {
     setDataSetFiltered(filteredData);  // Update the context with the filtered dataset
   }
 
+  const determineThreatClass = (levelThereat) => {
+    // console.log(levelThereat);
+    let threatClass = "";
+    if (levelThereat) {
+      switch (levelThereat) {
+        case "info":
+          threatClass = "text-white-500";
+          break;
+        case "low":
+          threatClass = "text-blue-500";
+          break;
+        case "medium":
+          threatClass = "text-green-500";
+          break;
+        case "high":
+          threatClass = "text-orange-500";
+          break;
+        case "critical":
+          threatClass = "text-red-500";
+          break;
+        default:
+          threatClass = ""; // Optional: Add a default class or leave it empty
+      }
+    }
+    return threatClass;
+  };
+
   return (
     <>
 
@@ -77,36 +104,13 @@ function ResultJson() {
                     solution,
                     attention
                   } = result[vulnerability] || {}; // Default to an empty object if result[vulnerability] is undefined
-
-                  let threatClass = "";
-
-                  if (levelThereat) { // Check if levelThereat is defined
-                    switch (levelThereat) {
-                      case "info":
-                        threatClass = "text-white-500";
-                        break;
-                      case "low":
-                        threatClass = "text-blue-500";
-                        break;
-                      case "medium":
-                        threatClass = "text-green-500";
-                        break;
-                      case "high":
-                        threatClass = "text-orange-500";
-                        break;
-                      case "critical":
-                        threatClass = "text-red-500";
-                        break;
-                      default:
-                        threatClass = ""; // Optional: Add a default class or leave it empty
-                    }
-                  }
+                  
+                  const threatClass = determineThreatClass(levelThereat);
 
                   return (
                     <Card key={vulnerability} className="py-4 w-full bg-neutral-800">
 
                       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start cursor-pointer"
-                        // onPress={onOpen} 
                         onClick={() => handleCardClick({
                           vulnerability,
                           descriptions,

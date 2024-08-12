@@ -13,11 +13,13 @@ export const FileImportContextProvider = ({ children }) => {
   const [projectFramework, setProjectFramework] = useState(''); // store data nama framework jika menggunakan framework
   const [checkedPaths, setCheckedPaths] = useState([]); // array dari hasil akhir file mana saja yang di checked
   const [isResultVisible, setIsResultVisible] = useState(false); // kondisi dmn result component akan muncul ketika ini true
-
+  const [isLoadingImport, setIsLoadingImport] = useState(false); // loading handler
   useEffect(() => {
     if (filePaths.length > 0) {
       const generateContent = async () => {
         try {
+          setIsLoadingImport(true)
+
           const model = genAI.getGenerativeModel({
             model: "gemini-1.5-flash",
             generationConfig: { responseMimeType: "application/json" }
@@ -47,8 +49,11 @@ export const FileImportContextProvider = ({ children }) => {
           setProjectFramework(prevState => {
             return JSONtextGenAI?.project || prevState;
           });
+
+          setIsLoadingImport(false)
   
         } catch (error) {
+          setIsLoadingImport(false)
           console.error("Error generating content:", error);
         }
       };
@@ -65,6 +70,7 @@ export const FileImportContextProvider = ({ children }) => {
       projectFramework, setProjectFramework,
       checkedPaths, setCheckedPaths,
       isResultVisible, setIsResultVisible,
+      isLoadingImport, setIsLoadingImport
     }}>
       {children}
     </FileImportContext.Provider>

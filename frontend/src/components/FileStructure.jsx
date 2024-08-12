@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-	Card, CardBody, Divider,
+	Card, CardBody, Divider, Skeleton,
 	Accordion, AccordionItem, CheckboxGroup, Checkbox,
 	Popover, PopoverTrigger, PopoverContent, Button, // info pop up filePathsAiSuggest
 	Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure // modal for result before read all checked file
@@ -19,8 +19,9 @@ function FileStructure() {
 		filePaths,
 		filePathsAiSuggest,
 		projectFramework,
-		checkedPaths, setCheckedPaths, 
-		setIsResultVisible
+		checkedPaths, setCheckedPaths,
+		setIsResultVisible,
+		isLoadingImport
 	} = useContext(FileImportContext)
 
 	const {
@@ -143,8 +144,8 @@ function FileStructure() {
 				setIsSubmited(true)
 				setIsResultVisible(true);
 				setDataset({
-					'framework' :  projectFramework,
-					'code' : filesArray,
+					'framework': projectFramework,
+					'code': filesArray,
 				})
 			})
 			.catch((error) => {
@@ -160,8 +161,14 @@ function FileStructure() {
 					<Card className='min-w-[300px] max-w-[600px] p-5 pb-10'>
 						<CardBody className='max-h-[600px] scroll-auto justify-top'>
 
-							<div>
-								Project : {projectFramework}
+							<div className='flex flex-row'>
+								{isLoadingImport ? (
+									<div className=" ps-2 max-w-[200px] w-full flex items-center gap-3">
+										<div className="w-full flex flex-col gap-2">
+											<Skeleton className="h-3 w-2/5 rounded-lg pb-8" />
+										</div>
+									</div>
+								) : projectFramework}
 							</div>
 
 							<Divider className='my-2' />
@@ -175,7 +182,7 @@ function FileStructure() {
 								{filePathsAiSuggest.length > 0 ? (
 									<div className='flex flex-row gap-2'>
 										<Popover placement="bottom" showArrow={true} key='warning' color={'default'}>
-											<PopoverTrigger>
+											<PopoverTrigger disabled>
 												<Button color='ghost' size="sm" className="w-fit">{filePathsAiSuggest.length} file is already checked by AI</Button>
 											</PopoverTrigger>
 											<PopoverContent>
@@ -203,12 +210,18 @@ function FileStructure() {
 											</PopoverContent>
 										</Popover>
 									</div>
-								) : ""}
+								) : (
+									<div className=" ps-2 max-w-[200px] w-full flex items-center gap-3">
+										<div className="w-full flex flex-col gap-2">
+											<Skeleton className="h-3 w-5/5 rounded-lg pb-8" />
+										</div>
+									</div>
+								)}
 
 								{/* MODAL */}
 								{filesStructure.length > 0 ? (
 									<div className=''>
-										<Button color='default' size='sm' onPress={onOpen}>Submit Result ({checkedPaths.length} files)</Button>
+										<Button color='default' size='sm' onPress={onOpen}>Scan ({checkedPaths.length} files)</Button>
 										<Modal
 											size='2xl'
 											backdrop='blur'
