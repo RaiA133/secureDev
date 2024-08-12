@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ResultContext } from "../contexts/resultContextJson";
+import { ResultContext } from "../contexts/resultContextMd";
 import { Card, Skeleton } from "@nextui-org/react";
 import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
