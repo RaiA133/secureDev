@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ResultContext } from "../contexts/resultContextJson";
 import { GenerateCodeChanges } from "../contexts/generateCodeChanges";
 import {
@@ -16,6 +16,7 @@ function ResultJson() {
   const { result, isLoading, isError, dataset } = useContext(ResultContext);
   const { setPreDataGenCodeChanges, setDataSetFiltered, isLoadingCodeChanges, resultCodeChange } = useContext(GenerateCodeChanges);
   const [selectedVulnerability, setSelectedVulnerability] = useState(null);
+  const [selectedLevelThereat, setSelectedLevelThereat] = useState("");
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal 
 
@@ -25,38 +26,19 @@ function ResultJson() {
   };
 
   const handleGenCodeChangeSubmit = () => {
-    const filteredData = dataset.code.filter(file => 
+    const filteredData = dataset.code.filter(file =>
       selectedVulnerability.filePath.includes(file.filePath)
     );
     setPreDataGenCodeChanges(selectedVulnerability);
     setDataSetFiltered(filteredData);
-  }  
+  }
 
-  const determineThreatClass = (levelThereat) => {
-    // console.log(levelThereat);
-    let threatClass = "";
-    if (levelThereat) {
-      switch (levelThereat) {
-        case "info":
-          threatClass = "text-white-500";
-          break;
-        case "low":
-          threatClass = "text-blue-500";
-          break;
-        case "medium":
-          threatClass = "text-green-500";
-          break;
-        case "high":
-          threatClass = "text-orange-500";
-          break;
-        case "critical":
-          threatClass = "text-red-500";
-          break;
-        default:
-          threatClass = ""; // Optional: Add a default class or leave it empty
-      }
-    }
-    return threatClass;
+  const threatClasses = {
+    critical: 'text-red-500',
+    high: 'text-orange-500',
+    medium: 'text-yellow-500',
+    low: 'text-green-500',
+    info: 'text-blue-500'
   };
 
   return (
@@ -118,7 +100,7 @@ function ResultJson() {
         </Card >
       ) : (
         result && (
-          <Card className="min-w-[300px] max-w-full p-5">
+          <Card className="min-w-[300px] max-w-full p-5 mb-7">
             <div className="text-[12px] max-h-[600px] overflow-auto">
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
@@ -137,8 +119,8 @@ function ResultJson() {
                       attention
                     } = result[vulnerability] || {}; // Default to an empty object if result[vulnerability] is undefined
 
-                    const threatClass = determineThreatClass(levelThereat);
-
+                    const threatClass = threatClasses[levelThereat] || 'text-gray-500';
+                    
                     return (
                       <Card key={vulnerability} className="py-4 w-full bg-neutral-800">
 

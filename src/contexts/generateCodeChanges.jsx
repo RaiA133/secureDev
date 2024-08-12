@@ -55,7 +55,7 @@ export const GenerateCodeChangesProvider = ({ children }) => {
           
           ...
 
-          codeChanges should not be returned in JSON form, but returned in markdown form
+          codeChanges should not be returned in JSON form, but returned in markdown form, the codeChanges is must be code that change or updated from code above
           `;
 
           const resultGenAI = await model.generateContent(prompt);
