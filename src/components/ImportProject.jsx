@@ -7,8 +7,11 @@ import {
 import { FileImportContext } from "../contexts/fileImportContext";
 import { ResultContext } from "../contexts/resultContextJson";
 
-const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build", ".vscode", "vendor"];
-
+const EXCLUDED_FOLDERS = [
+  "node_modules", ".git", "dist", "build", ".vscode", "vendor", 
+  "logs", "coverage", "tmp", "temp", "__pycache__", "cache", 
+  "public",  "static", ".idea", "out", "target", "lib", ".svn"
+];
 
 
 function ImportProject() {
