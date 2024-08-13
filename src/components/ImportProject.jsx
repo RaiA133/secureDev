@@ -51,7 +51,7 @@ function ImportProject() {
 
   return (
     <div className={stickyImportPage ? "sticky top-10 self-start" : ""}>
-      <Card className="max-w-[600px] max-h-[350px] p-5">
+      <Card className="w-full max-h-[350px] p-5">
         <CardHeader className="flex gap-3">
           <Image
             alt="nextui logo"

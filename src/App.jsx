@@ -16,13 +16,13 @@ function App() {
 
       {!isResultVisible ? (
         // Center ImportProject and FileStructure vertically when Result is not visible
-        <div className='flex flex-1 justify-center items-center flex-row gap-4'>
+        <div className='flex flex-1 justify-center items-center md:flex-row flex-col gap-4 mx-5'>
           <ImportProject />
           <FileStructure />
         </div>
       ) : (
-        <div className='flex flex-col gap-4 min-w-[300px] max-w-[850px]'>
-          <div className='flex flex-row gap-4 pt-10'>
+        <div className='flex flex-col gap-4 min-w-[300px] max-w-[850px] mx-5'>
+          <div className='flex md:flex-row flex-col gap-4 pt-10'>
             <div className='flex-1'>
               <ImportProject />
             </div>
