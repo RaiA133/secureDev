@@ -216,7 +216,7 @@ function FileStructure() {
 										</Popover>
 									</div>
 								) : (
-									<div className=" ps-2 max-w-[200px] w-full flex items-center gap-3">
+									<div className=" ps-2 max-w-[200px] w-full flex items-center gap-3 mr-3">
 										<div className="w-full flex flex-col gap-2">
 											<Skeleton className="h-3 w-5/5 rounded-lg pb-8" />
 										</div>
