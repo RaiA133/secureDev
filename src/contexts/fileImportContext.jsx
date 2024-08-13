@@ -19,7 +19,7 @@ export const FileImportContextProvider = ({ children }) => {
   const genAI = new GoogleGenerativeAI(apiKey);
 
   useEffect(() => {
-    if (filePaths.length > 0) {
+    if (selectedFiles.length > 0) {
       const generateContent = async () => {
         try {
           setIsLoadingImport(true)
@@ -63,7 +63,7 @@ export const FileImportContextProvider = ({ children }) => {
       };
       generateContent();
     }
-  }, [filePaths]);
+  }, [selectedFiles]);
   
 
   return (
