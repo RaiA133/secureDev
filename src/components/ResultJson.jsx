@@ -1,4 +1,4 @@
-import React, { useContext, useState, Suspense, lazy, useCallback } from 'react';
+import React, { useContext, useState, Suspense, lazy, useCallback, useEffect } from 'react';
 import { ResultContext } from '../contexts/resultContextJson';
 import { GenerateCodeChanges } from '../contexts/generateCodeChanges';
 import {
@@ -40,6 +40,26 @@ function ResultJson() {
     info: 'text-blue-500'
   };
 
+  // for responsive skeleton loading | if md/768px length : 3 if below, length : 1
+  const [cardCount, setCardCount] = useState(getCardCount());
+  useEffect(() => {
+    const handleResize = () => {
+      setCardCount(getCardCount());
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  function getCardCount() {
+    return window.innerWidth >= 768 ? 3 : 1;
+  }
+
+  // random skeleton length in modal generate code loading
+  const getRandomClass = () => {
+    const width = Math.random() > 0.5 ? '3/5' : '4/5'; // Randomly choose between '3/5' and '4/5'
+    const bgColor = Math.random() > 0.5 ? '200' : '300'; // Randomly choose between '200' and '300' for background color
+    return { width, bgColor };
+  };
+
   return (
     <>
       {isError && (
@@ -51,7 +71,7 @@ function ResultJson() {
 
       {isLoading ? (
         <Card className="min-w-[300px] max-w-[780px] p-5 pb-10 flex flex-row gap-3">
-          {Array.from({ length: 3 }).map((_, idx) => (
+          {Array.from({ length: cardCount }).map((_, idx) => (
             <Card key={idx} className="w-full space-y-5 p-4" radius="lg">
               <div className="space-y-3">
                 <Skeleton className="w-4/5 rounded-lg">
@@ -119,6 +139,7 @@ function ResultJson() {
         )
       )}
 
+      {/* MODAL */}
       <Modal
         placement='top'
         size='4xl'
@@ -130,7 +151,7 @@ function ResultJson() {
           base: "border-[#292f46] bg-[#27272A] dark:bg-[#27272A] text-white",
           header: "border-b-[1px] border-[#292f46]",
           footer: "border-t-[1px] border-[#292f46]",
-          closeButton: "hover:bg-white/5 active:bg-white/10",
+          closeButton: "hover:bg-white/5 active:bg-white/10 mt-3 xs:m-4 sm:m-3",
         }}
       >
         <ModalContent>
@@ -146,7 +167,7 @@ function ResultJson() {
                 </div>
               </ModalHeader>
               <ModalBody>
-                <div className="text-sm">
+                <div className="text-xs md:text-sm">
                   <div className="max-h-[350px] pr-3 overflow-y-auto">
                     <div>
                       <strong>File path:</strong>
@@ -177,18 +198,21 @@ function ResultJson() {
                   {isLoadingCodeChanges ? (
                     <Card className="space-y-5 p-4 w-full" radius="lg">
                       <div className="space-y-3">
-                        {Array.from({ length: 6 }).map((_, idx) => (
-                          <Skeleton key={idx} className={`w-${idx % 2 === 0 ? '3/5' : '4/5'} rounded-lg`}>
-                            <div className={`h-3 w-${idx % 2 === 0 ? '3/5' : '4/5'} rounded-lg bg-default-${idx % 2 === 0 ? '200' : '300'}`}></div>
-                          </Skeleton>
-                        ))}
+                        {Array.from({ length: 6 }).map((_, idx) => {
+                          const { width, bgColor } = getRandomClass();
+                          return (
+                            <Skeleton key={idx} className={`w-${width} rounded-lg`}>
+                              <div className={`h-3 w-${width} rounded-lg bg-default-${bgColor}`}></div>
+                            </Skeleton>
+                          );
+                        })}
                       </div>
                     </Card>
                   ) : (
                     resultCodeChange[selectedVulnerability?.vulnerability] && (
                       <Card className="min-w-[300px] w-full p-5">
                         <div className="w-full space-y-5">
-                          <div className="text-[12px] max-h-[400px] overflow-auto pr-3">
+                          <div className="text-[10px] md:text-[12px] max-h-[400px] overflow-auto pr-3">
                             <Suspense fallback={<Skeleton />}>
                               <Markdown
                                 children={resultCodeChange[selectedVulnerability?.vulnerability]}
