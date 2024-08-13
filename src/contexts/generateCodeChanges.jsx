@@ -44,18 +44,19 @@ export const GenerateCodeChangesProvider = ({ children }) => {
 
           output format: 
           1. <filePath> : 
-            '''bash
+            \`\`\`bash
             <codeChanges>
-            '''
+            \`\`\`
 
           2. other <filePath> and other codeChanges
-            '''bash
+            \`\`\`bash
             <other codeChanges>
-            '''
-          
+            \`\`\`
+
           ...
 
           codeChanges should not be returned in JSON form, but returned in markdown form, the codeChanges is must be code that change or updated from code above
+          and do not use patch or diff format in codeChanges.
           `;
 
           const resultGenAI = await model.generateContent(prompt);
