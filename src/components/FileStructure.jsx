@@ -1,19 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react';
+
 import {
 	Card, CardBody, Divider, Skeleton,
 	Accordion, AccordionItem, CheckboxGroup, Checkbox,
 	Popover, PopoverTrigger, PopoverContent, Button, // info pop up filePathsAiSuggest
 	Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure // modal for result before read all checked file
 } from "@nextui-org/react";
-import { buildFolderStructure } from '../utils/buildFolderStructure';
-import { FileImportContext } from '../contexts/fileImportContext';
+
 import { ResultContext } from '../contexts/resultContextJson';
-import { getCheckedPaths } from '../utils/getCheckedPaths';
+import { FileImportContext } from '../contexts/fileImportContext';
+import { GenerateCodeChanges } from '../contexts/generateCodeChanges';
+
 import { readFiles } from '../utils/readFiles';
+import { getCheckedPaths } from '../utils/getCheckedPaths';
+import { buildFolderStructure } from '../utils/buildFolderStructure';
+
+
 
 function FileStructure() {
 	const [filesStructure, setFilesStructure] = useState([]); // hasil perubahan dari array path project ke object yg bisa dibaca UI
-	const [isSubmited, setIsSubmited] = useState(false)
 	const {
 		selectedFiles,
 		filePaths,
@@ -22,13 +27,15 @@ function FileStructure() {
 		checkedPaths, setCheckedPaths,
 		setIsResultVisible,
 	} = useContext(FileImportContext)
-
+	const { 
+		setResultCodeChange 
+	} = useContext(GenerateCodeChanges);
 	const {
-		setDataset
+		setDataset, result,
+		isLoading,
 	} = useContext(ResultContext)
 
-	// modal 
-	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+	const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal 
 
 	useEffect(() => {
 		setFilesStructure(buildFolderStructure(filePaths, filePathsAiSuggest))
@@ -133,6 +140,7 @@ function FileStructure() {
 
 	// membaca semua file ketika pencet submit
 	const handleSubmit = () => {
+		setResultCodeChange("")
 		readFiles(selectedFiles, checkedPaths)
 			.then((fileContents) => {
 				const filesArray = fileContents.map(file => ({
@@ -140,7 +148,6 @@ function FileStructure() {
 					filePath: file.filePath,
 					content: file.content,
 				}));
-				setIsSubmited(true)
 				setIsResultVisible(true);
 				setDataset({
 					'framework': projectFramework,
@@ -148,7 +155,6 @@ function FileStructure() {
 				})
 			})
 			.catch((error) => {
-				setIsSubmited(false)
 				console.error("Error reading files:", error);
 			});
 	};
@@ -220,7 +226,13 @@ function FileStructure() {
 								{/* MODAL */}
 								{filesStructure.length > 0 ? (
 									<div className=''>
-										<Button color='default' size='sm' onPress={onOpen}>Scan ({checkedPaths.length} files)</Button>
+
+										{!isLoading && (
+											<Button color='default' size='sm' onPress={onOpen}>Scan
+												{result ? (" Again ") : " "}
+											({checkedPaths.length} files)</Button>
+										)}
+
 										<Modal
 											size='2xl'
 											backdrop='blur'
