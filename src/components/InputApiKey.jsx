@@ -21,7 +21,7 @@ function InputApiKey() {
     <div className="absolute bottom-0 left-0 m-5 p-0 flex flex-row gap-2">
       <Input
         title="Google API Key"
-        placeholder="Input Google API Key"
+        placeholder="Input Gemini API Key"
         size="sm"
         value={apiKey}
         onChange={handleInputChange}
