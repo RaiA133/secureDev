@@ -4,7 +4,7 @@ import { GenerateCodeChanges } from '../contexts/generateCodeChanges';
 import {
   Skeleton,
   Button, Divider,
-  Card, CardHeader, CardBody, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure,
+  Card, CardHeader, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure,
 } from '@nextui-org/react';
 
 const Markdown = lazy(() => import('react-markdown'));
@@ -13,9 +13,10 @@ import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 
 function ResultJson() {
+  const [selectedVulnerability, setSelectedVulnerability] = useState(null);
+  
   const { result, isLoading, isError, dataset } = useContext(ResultContext);
   const { setPreDataGenCodeChanges, setDataSetFiltered, isLoadingCodeChanges, resultCodeChange } = useContext(GenerateCodeChanges);
-  const [selectedVulnerability, setSelectedVulnerability] = useState(null);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -192,7 +193,16 @@ function ResultJson() {
 
                 <Divider className='my-2 bg-white' />
 
-                <Button color="default" onClick={handleGenCodeChangeSubmit}> <b>Generate Code Changes</b> </Button>
+                {selectedVulnerability?.levelThereat !== "info" && (
+                  !isLoadingCodeChanges && (
+                    <Button color="default" onClick={handleGenCodeChangeSubmit}>
+                      <b>
+                        Generate Code Changes
+                        {resultCodeChange[selectedVulnerability?.vulnerability] && " Again"}
+                      </b>
+                    </Button>
+                  )
+                )}
 
                 <div className="dark text-foreground bg-background rounded-2xl">
                   {isLoadingCodeChanges ? (

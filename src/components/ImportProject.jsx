@@ -1,14 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
+
 import {
   Card, CardHeader, CardBody, CardFooter, Divider, Link, Image,
 } from "@nextui-org/react";
-import { FileImportContext } from "../contexts/fileImportContext";
 
-const EXCLUDED_FOLDERS = ["node_modules", ".git", "dist", "build", ".vscode", "vendor"];
+import { FileImportContext } from "../contexts/fileImportContext";
+import { ResultContext } from "../contexts/resultContextJson";
+
+const EXCLUDED_FOLDERS = [
+  "node_modules", ".git", "dist", "build", ".vscode", "vendor", 
+  "logs", "coverage", "tmp", "temp", "__pycache__", "cache", 
+  "public",  "static", ".idea", "out", "target", "lib", ".svn"
+];
+
 
 function ImportProject() {
-  const { selectedFiles, setSelectedFiles, filePaths, setFilePaths, isResultVisible } = useContext(FileImportContext);
   const [detectedExcludedFolders, setDetectedExcludedFolders] = useState([]);
+
+  const { 
+    selectedFiles, setSelectedFiles, 
+    filePaths, setFilePaths, 
+    isResultVisible, 
+    setFilePathsAiSuggest,
+  } = useContext(FileImportContext);
+  const {
+		setResult,
+	} = useContext(ResultContext)
 
   useEffect(() => {
     if (selectedFiles.length > 0) {
@@ -22,6 +39,9 @@ function ImportProject() {
   }, [selectedFiles]);
 
   const handleFileChange = (event) => {
+    setResult("")
+    setFilePathsAiSuggest([])
+    
     const files = Array.from(event.target.files);
     const foundExcludedFolders = new Set();
     const filteredFiles = files.filter(file => {

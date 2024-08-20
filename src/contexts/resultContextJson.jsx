@@ -91,7 +91,7 @@ export const ResultContextProvider = ({ children }) => {
   return (
     <ResultContext.Provider value={{
       dataset, setDataset,
-      result,
+      result, setResult,
       isLoading, setIsLoading,
       isError, setIsError
     }}>
