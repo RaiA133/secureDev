@@ -188,7 +188,7 @@ function FileStructure() {
 									<div className='flex flex-row gap-2'>
 										<Popover placement="bottom" showArrow={true} key='warning' color={'default'}>
 											<PopoverTrigger disabled>
-												<Button color='ghost' size="sm" className="w-fit" style="cursor: pointer">{filePathsAiSuggest.length} file is already checked by AI</Button>
+												<Button color='ghost' size="sm" className="w-fit">{filePathsAiSuggest.length} file is already checked by AI</Button>
 											</PopoverTrigger>
 											<PopoverContent>
 												<div className="px-1 py-2">
