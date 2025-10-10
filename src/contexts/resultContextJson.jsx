@@ -38,7 +38,7 @@ export const ResultContextProvider = ({ children }) => {
           ];
 
           const model = genAI.getGenerativeModel({
-            model: "ggemini-1.5-flash",
+            model: "gemini-2.5-flash-preview-image",
             generationConfig: { responseMimeType: "application/json" },
             safetySettings,
           });
