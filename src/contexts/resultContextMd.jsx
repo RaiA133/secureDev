@@ -30,7 +30,7 @@ export const ResultContextProvider = ({ children }) => {
           ];
 
           const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash-image",
+            model: "gemini-1.5-flash",
             safetySettings,
           });
 
